@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtualenvs / venv files (do NOT commit)
+venv/
+.env/
+.venv/
+Lib/
+Scripts/
+pyvenv.cfg
+site-packages/
+
+# Editor / IDE
+.vscode/
+.idea/
+
+# Data / outputs / logs / secrets
+data/
+*.csv
+outputs/
+logs/
+*.log
+.env
+*.env
+.rtgs_config.json
+
+# Packaging / build
+dist/
+build/
+*.egg-info/
