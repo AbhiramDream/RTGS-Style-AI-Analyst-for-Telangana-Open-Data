@@ -5,11 +5,26 @@ from loguru import logger
 import pandas as pd
 from typing import Optional, Any
 
+# plotting
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+try:
+    import seaborn as sns
+except Exception:
+    sns = None
+
 from pipeline.data_loader import DataLoader
 from pipeline.data_cleaner import DataCleaner
 from pipeline.imputer import DataImputer
 from pipeline.analyzer import Analyzer
 from pipeline.reporter import Reporter
+
+# optional pretty ASCII tables
+try:
+    from tabulate import tabulate
+except Exception:
+    tabulate = None
 
 # configure logging
 CONFIG_FILE = ".rtgs_config.json"
@@ -137,19 +152,24 @@ def impute():
 
 @cli.command()
 def analyze():
-    """Run full analysis and generate report (uses last loaded path)"""
+    """Run full analysis and generate report (uses last loaded path)
+    Prints ASCII tables and simple ASCII bar charts to console.
+    """
     file_path = load_last_path()
     if not file_path:
         click.echo(" Please load a dataset first using `load <path>`")
         return
+
     loader = DataLoader(file_path)
     df = loader.load()
     cleaner = DataCleaner(df)
     df = cleaner.clean()
     imputer = DataImputer(df)
     df = imputer.impute()
+
     analyzer = Analyzer(df)
     results = analyzer.run_analysis()
+
     reporter = Reporter(results)
     try:
         reporter.generate()
@@ -157,6 +177,8 @@ def analyze():
         logger.exception("Reporter.generate failed: %s", e)
         click.echo(" Report generation failed; see logs for details.")
         return
+
+    # Prepare summary DataFrame
     try:
         if isinstance(results, pd.DataFrame):
             summary_df = results
@@ -164,12 +186,55 @@ def analyze():
             summary_df = pd.DataFrame({k: (v if not hasattr(v, "items") else list(v.values())) for k, v in results.items()})
         else:
             summary_df = pd.DataFrame(results)
-        with pd.option_context("display.max_rows", 20, "display.max_columns", 20, "display.width", 120):
-            click.echo("\n--- Analysis summary (first rows) ---")
-            click.echo(summary_df.head(50).to_string(index=True))
-            click.echo("--- end summary ---\n")
     except Exception:
-        click.echo(" Report generated. Summary could not be rendered to table; check report files in outputs/ or logs/")
+        summary_df = pd.DataFrame({"info": [str(results)]})
+
+    # helper: simple ASCII bar
+    def _bar(pct: float, width: int = 40) -> str:
+        try:
+            pctf = float(pct)
+        except Exception:
+            pctf = 0.0
+        n = int(round((pctf / 100.0) * width))
+        n = max(0, min(width, n))
+        return "[" + "#" * n + " " * (width - n) + f"] {pctf:.1f}%"
+
+    # Print a concise tabular summary using tabulate if available
+    click.echo("\n--- Analysis summary (first rows) ---")
+    try:
+        to_print = summary_df.head(50)
+        if tabulate:
+            click.echo(tabulate(to_print, headers="keys", tablefmt="grid", showindex=True))
+        else:
+            click.echo(to_print.to_string(index=True))
+    except Exception:
+        click.echo("Could not render summary table; falling back to raw repr.")
+        click.echo(repr(summary_df.head(20)))
+    click.echo("--- end summary ---\n")
+
+    # Print dataset-level ASCII diagnostics: top missing columns and simple hist stats
+    try:
+        miss = (df.isna().mean() * 100).sort_values(ascending=False).head(12)
+        if not miss.empty:
+            click.echo("Top missing columns (ASCII bars):")
+            for col, pct in miss.items():
+                click.echo(f"{col[:30]:30} {_bar(pct, width=36)}")
+            click.echo("")
+        # show basic numeric summary table
+        num = df.select_dtypes(include=["number"]).describe().transpose()
+        if not num.empty:
+            click.echo("Numeric columns (summary):")
+            # round and select common columns; handle different pandas versions
+            cols = [c for c in ["count", "mean", "std", "min", "25%", "50%", "75%", "max"] if c in num.columns]
+            if tabulate:
+                click.echo(tabulate(num[cols].round(3), headers="keys", tablefmt="github"))
+            else:
+                click.echo(num[cols].round(3).to_string())
+            click.echo("")
+    except Exception:
+        # non-fatal, continue
+        pass
+
     click.echo(" Insights and report generated!")
 
 @cli.command()
@@ -251,49 +316,198 @@ def schema():
 @click.option("--model", "-m", default=None, help="Local HF model name (overrides HF_MODEL env var).")
 @click.option("--max-length", "-L", default=256, type=int, help="Max generation length.")
 def llm(query, as_json, model, max_length):
-    """Ask the local transformer LLM (requires transformers)."""
+    """Ask the local transformer LLM and perform actions (tables/plots/stats) on the last-loaded dataset."""
     if not _try_transformers:
         click.echo("Transformers not available. Install with: pip install transformers[torch]")
         return
+
     if not query:
         query = click.edit("# Write your query above. Save & close to send.\n")
         if not query:
             click.echo("No query provided.")
             return
-    ctx = ""
+
     last_path = load_last_path()
-    if last_path and os.path.exists(last_path):
-        try:
-            preview_df = pd.read_csv(last_path, nrows=5)
-            preview_csv = preview_df.to_csv(index=False)
-            miss = (preview_df.isna().mean() * 100).round(2).sort_values(ascending=False)
-            miss_txt = "\n".join([f"{c}: {p}%" for c, p in miss.items()])
-            ctx = f"Dataset preview (first 5 rows CSV):\n{preview_csv}\nTop missing on preview:\n{miss_txt}\n\n"
-        except Exception:
-            ctx = ""
-    if as_json:
-        prompt = (
-            "You are an assistant that returns ONLY valid JSON. "
-            "JSON must include 'answer' (string) and may include 'table' (array/object).\n\n"
-            f"{ctx}\nUser request:\n{query}\n\nReturn valid JSON only."
-        )
-    else:
-        prompt = f"{ctx}\nUser request:\n{query}\n\nAnswer concisely."
+    if not last_path or not os.path.exists(last_path):
+        click.echo(" No dataset loaded. Run: main.py load <path> first.")
+        return
+
+    # load small preview and metadata for context
+    try:
+        df = pd.read_csv(last_path)
+    except Exception as e:
+        click.echo(f"Failed to read dataset: {e}")
+        return
+
+    cols = list(df.columns)
+    dtypes = {c: str(df[c].dtype) for c in cols}
+    missing = (df.isna().mean() * 100).round(2).sort_values(ascending=False).head(12).to_dict()
+    numeric_cols = df.select_dtypes(include=["number"]).columns.tolist()
+    preview = df.head(5)[cols[:12]].to_csv(index=False)  # limit width
+
+    # build structured prompt asking model to return JSON actions
+    prompt = f"""
+You are a data-assistant. The user query is below. You MUST return JSON only (no other text).
+Context:
+- Columns: {cols}
+- Dtypes: {dtypes}
+- Top missing (pct): {missing}
+- Numeric columns: {numeric_cols}
+- Preview (first 5 rows CSV):
+{preview}
+
+User query:
+{query}
+
+Return JSON with:
+{{
+  "answer": "<short textual answer/summary>",
+  "actions": [
+    {{
+      "type": "table" | "plot" | "stat",
+      "columns": ["col1", "col2", ...],
+      "n": <rows for table, optional>,
+      // for plot:
+      "plot_type": "hist" | "line" | "scatter" | "bar" | "box",
+      // for stat, optional list of stats ["mean","median","count"...]
+    }}
+  ]
+}}
+
+Examples:
+- If user asks 'show distribution of age and salary' -> return one action with type 'plot', plot_type 'hist', columns ['age','salary'].
+- If user asks 'top 10 rows of hospital and test_name' -> return type 'table', columns ['hospital','test_name'], n=10.
+Keep JSON concise and valid.
+"""
     try:
         agent = TransformerAgent(model=model)
     except Exception as e:
         click.echo(f"Failed to initialize TransformerAgent: {e}")
         return
-    if as_json:
-        parsed = agent.generate_json(prompt, max_length=max_length)
-        if parsed is None:
-            out = agent.generate(prompt, max_length=max_length)
-            click.echo(out)
-        else:
-            click.echo(json.dumps(parsed, indent=2))
-    else:
+
+    parsed = agent.generate_json(prompt, max_length=max_length)
+    if parsed is None:
+        # fallback to plain text answer
         out = agent.generate(prompt, max_length=max_length)
         click.echo(out)
+        return
+
+    # Ensure outputs dir exists
+    out_dir = "outputs"
+    os.makedirs(out_dir, exist_ok=True)
+
+    results_out = {"answer": parsed.get("answer", ""), "tables": [], "plots": [], "stats": {}}
+
+    actions = parsed.get("actions", [])
+    if not isinstance(actions, list):
+        actions = []
+
+    for i, act in enumerate(actions):
+        try:
+            atype = act.get("type")
+            cols_req = act.get("columns", [])
+            # validate columns
+            cols_ok = [c for c in cols_req if c in df.columns]
+            if not cols_ok and cols_req:
+                results_out.setdefault("warnings", []).append(f"Action {i}: none of requested columns found: {cols_req}")
+                continue
+
+            if atype == "table":
+                n = int(act.get("n", 5))
+                tbl = df[cols_ok].head(n)
+                csv_text = tbl.to_csv(index=False)
+                results_out["tables"].append({"columns": cols_ok, "n": n, "csv": csv_text})
+            elif atype == "stat":
+                stats_list = act.get("stats", ["count", "mean", "std", "min", "25%", "50%", "75%", "max"])
+                # compute describe and pick requested stats when possible
+                desc = df[cols_ok].describe().transpose().to_dict(orient="index")
+                # filter to stats_list where available
+                filtered = {}
+                for c, vals in desc.items():
+                    filtered[c] = {k: vals.get(k) for k in stats_list if k in vals}
+                results_out["stats"].update(filtered)
+            elif atype == "plot":
+                plot_type = act.get("plot_type", "hist")
+                filename = os.path.join(out_dir, f"llm_plot_{i}.png")
+                try:
+                    plt.clf()
+                    if plot_type == "hist":
+                        # if multiple numeric columns, draw histogram per column
+                        for c in cols_ok:
+                            if c in numeric_cols:
+                                if sns:
+                                    sns.histplot(df[c].dropna(), kde=False, label=c)
+                                else:
+                                    plt.hist(df[c].dropna(), alpha=0.6, bins=30, label=c)
+                        plt.legend()
+                        plt.title("Histogram: " + ", ".join(cols_ok))
+                    elif plot_type == "line":
+                        if len(cols_ok) >= 2:
+                            x, y = cols_ok[0], cols_ok[1]
+                            plt.plot(df[x], df[y], marker=".", linestyle="-")
+                            plt.xlabel(x); plt.ylabel(y)
+                        else:
+                            plt.plot(df[cols_ok[0]])
+                    elif plot_type == "scatter":
+                        if len(cols_ok) >= 2:
+                            x, y = cols_ok[0], cols_ok[1]
+                            if sns:
+                                sns.scatterplot(x=df[x], y=df[y])
+                            else:
+                                plt.scatter(df[x], df[y], alpha=0.6)
+                            plt.xlabel(x); plt.ylabel(y)
+                        else:
+                            raise ValueError("scatter requires two columns")
+                    elif plot_type == "box":
+                        if sns:
+                            sns.boxplot(data=df[cols_ok].dropna())
+                        else:
+                            df[cols_ok].plot.box()
+                    elif plot_type == "bar":
+                        # aggregate first column counts or mean of second if provided
+                        if len(cols_ok) == 1:
+                            vc = df[cols_ok[0]].value_counts().head(20)
+                            vc.plot.bar()
+                        elif len(cols_ok) >= 2:
+                            agg = df.groupby(cols_ok[0])[cols_ok[1]].mean().nlargest(20)
+                            agg.plot.bar()
+                    else:
+                        # unknown -> try simple plot of first column
+                        plt.plot(df[cols_ok[0]].dropna())
+                    plt.tight_layout()
+                    plt.savefig(filename)
+                    results_out["plots"].append({"file": filename, "plot_type": plot_type, "columns": cols_ok})
+                    plt.clf()
+                except Exception as e:
+                    results_out.setdefault("warnings", []).append(f"plot {i} failed: {e}")
+            else:
+                results_out.setdefault("warnings", []).append(f"Unknown action type: {atype}")
+        except Exception as e:
+            results_out.setdefault("warnings", []).append(f"Action {i} error: {e}")
+
+    # output: JSON with answer, tables (csv strings) and saved plot paths
+    if as_json:
+        click.echo(json.dumps(results_out, indent=2, default=str))
+    else:
+        # human-friendly print
+        if results_out.get("answer"):
+            click.echo("\nAnswer:\n" + results_out["answer"] + "\n")
+        if results_out.get("tables"):
+            click.echo("Tables:")
+            for t in results_out["tables"]:
+                click.echo(f"Columns: {t['columns']} (n={t['n']})")
+                click.echo(t["csv"])
+        if results_out.get("plots"):
+            click.echo("Saved plots:")
+            for p in results_out["plots"]:
+                click.echo(f" - {p['file']}  ({p['plot_type']} on {p['columns']})")
+        if results_out.get("stats"):
+            click.echo("Stats:")
+            click.echo(json.dumps(results_out["stats"], indent=2, default=str))
+        if results_out.get("warnings"):
+            click.echo("\nWarnings:")
+            for w in results_out["warnings"]:
+                click.echo(" - " + str(w))
 
 if __name__ == "__main__":
     cli()
