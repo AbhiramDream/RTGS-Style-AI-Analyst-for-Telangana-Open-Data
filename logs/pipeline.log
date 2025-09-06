@@ -1,0 +1,48 @@
+2025-09-06 21:38:45 | INFO     | __main__:run_pipeline:44 - Starting data pipeline...
+2025-09-06 21:38:46 | INFO     | data_loader:load:12 - Dataset loaded successfully: 307367 rows, 34 columns
+2025-09-06 21:38:47 | INFO     | data_cleaner:clean:16 - Data cleaned
+2025-09-06 21:38:49 | INFO     | analyzer:run_analysis:9 - Analysis summary generated
+2025-09-06 21:38:49 | INFO     | __main__:run_pipeline:61 - Initializing AI agent with ollama/llama3.1...
+2025-09-06 21:38:52 | INFO     | reporter:generate:13 - Report generated
+2025-09-06 21:38:52 | SUCCESS  | __main__:run_pipeline:78 - Pipeline completed successfully!
+2025-09-06 21:38:52 | INFO     | __main__:interactive_query_mode:91 - Entering interactive query mode. Type 'quit' to exit, 'suggestions' for query ideas.
+2025-09-06 21:43:11 | INFO     | ai_agent:query:177 - Processing query: What percentage of patients have high blood sugar (>140 mg/dL)...
+2025-09-06 21:43:11 | ERROR    | ai_agent:_query_ollama:120 - Ollama query error: Object of type int64 is not JSON serializable
+2025-09-06 21:43:11 | INFO     | ai_agent:query:207 - Query processed in 0.00s using ollama/llama3.1
+2025-09-06 21:43:39 | INFO     | ai_agent:query:177 - Processing query: Which districts show abnormally high bilirubin or creatinine values?...
+2025-09-06 21:43:39 | ERROR    | ai_agent:_query_ollama:120 - Ollama query error: Object of type int64 is not JSON serializable
+2025-09-06 21:43:39 | INFO     | ai_agent:query:207 - Query processed in 0.00s using ollama/llama3.1
+2025-09-06 22:00:05 | INFO     | Dataset loaded successfully: 307367 rows, 34 columns
+2025-09-06 22:00:05 | INFO     | Data cached at stage: loaded
+2025-09-06 22:00:05 | SUCCESS  | Data loaded successfully: 307367 rows, 34 columns
+2025-09-06 22:00:42 | INFO     | Loaded data from stage: loaded
+2025-09-06 22:00:43 | INFO     | Data cleaned
+2025-09-06 22:00:43 | INFO     | Data cached at stage: cleaned
+2025-09-06 22:00:43 | SUCCESS  | Data cleaned successfully
+2025-09-06 22:01:09 | INFO     | Loaded data from stage: cleaned
+2025-09-06 22:01:12 | INFO     | Data cached at stage: imputed
+2025-09-06 22:01:12 | SUCCESS  | Data imputation completed successfully
+2025-09-06 22:01:28 | INFO     | Loaded data from stage: imputed
+2025-09-06 22:01:28 | INFO     | Using imputed data for analysis
+2025-09-06 22:01:28 | INFO     | Analysis summary generated
+2025-09-06 22:01:28 | SUCCESS  | Analysis completed and saved to logs\analysis_results.json
+2025-09-06 22:04:53 | INFO     | Loaded data from stage: imputed
+2025-09-06 22:04:53 | INFO     | Using imputed data for AI queries
+2025-09-06 22:04:55 | INFO     | Processing query: Show summary statistics for all columns...
+2025-09-06 22:05:34 | INFO     | Query processed in 38.71s using ollama/llama3.1
+2025-09-06 22:07:39 | INFO     | Loaded data from stage: imputed
+2025-09-06 22:07:39 | INFO     | Using imputed data for AI queries
+2025-09-06 22:07:42 | INFO     | Processing query: Show me the top 10 records with highest values...
+2025-09-06 22:07:54 | INFO     | Query processed in 12.87s using ollama/llama3.1
+2025-09-06 22:10:18 | INFO     | Loaded data from stage: imputed
+2025-09-06 22:10:18 | INFO     | Using imputed data for AI queries
+2025-09-06 22:10:20 | INFO     | Processing query: Which districts show abnormally high bilirubin or creatinine values?...
+2025-09-06 22:10:45 | INFO     | Query processed in 24.63s using ollama/llama3.1
+2025-09-06 22:11:52 | INFO     | Loaded data from stage: imputed
+2025-09-06 22:11:52 | INFO     | Using imputed data for AI queries
+2025-09-06 22:11:54 | INFO     | Processing query: Find anomalies in Vitamin B12 values across age groups...
+2025-09-06 22:12:21 | INFO     | Query processed in 26.29s using ollama/llama3.1
+2025-09-06 22:14:04 | INFO     | Loaded data from stage: imputed
+2025-09-06 22:14:04 | INFO     | Using imputed data for AI queries
+2025-09-06 22:14:06 | INFO     | Processing query: Which 5 facilities conducted the highest number of diagnostic tests...
+2025-09-06 22:14:27 | INFO     | Query processed in 21.51s using ollama/llama3.1
