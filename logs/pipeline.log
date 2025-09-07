@@ -116,3 +116,19 @@
 2025-09-07 10:55:17 | INFO     | Query processed in 26.82s using ollama/llama3.1
 2025-09-07 11:13:48 | INFO     | Processing query: analyze the dataset...
 2025-09-07 11:14:20 | INFO     | Query processed in 32.80s using ollama/llama3.1
+2025-09-07 11:34:17 | INFO     | Loaded data from stage: imputed
+2025-09-07 11:34:17 | INFO     | Using imputed data for AI queries
+2025-09-07 11:34:30 | INFO     | Processing query: provide the trends of the data and patterns...
+2025-09-07 11:35:05 | INFO     | Query processed in 34.76s using ollama/llama3.1
+2025-09-07 11:37:11 | INFO     | Loaded data from stage: imputed
+2025-09-07 11:37:11 | INFO     | Using imputed data for AI queries
+2025-09-07 11:37:11 | INFO     | Processing query: provide the trends of the data and patterns...
+2025-09-07 11:37:34 | INFO     | Query processed in 22.65s using ollama/llama3.1
+2025-09-07 11:40:02 | INFO     | Loaded data from stage: imputed
+2025-09-07 11:40:02 | INFO     | Using imputed data for AI queries
+2025-09-07 11:40:02 | INFO     | Processing query: can you predict the why the power consuption is more in some areas...
+2025-09-07 11:40:25 | INFO     | Query processed in 22.91s using ollama/llama3.1
+2025-09-07 11:43:13 | INFO     | Loaded data from stage: imputed
+2025-09-07 11:43:13 | INFO     | Using imputed data for AI queries
+2025-09-07 11:43:13 | INFO     | Processing query: can you predict the why the power consuption is more in some areas...
+2025-09-07 11:43:37 | INFO     | Query processed in 23.93s using ollama/llama3.1
