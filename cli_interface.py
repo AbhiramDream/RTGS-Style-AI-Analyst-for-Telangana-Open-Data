@@ -199,7 +199,7 @@ class ModularDataPipeline:
     def _interactive_mode(self, agent):
         """Interactive query mode."""
         print("\n" + "="*60)
-        print("🤖 AI Data Insights - Interactive Mode")
+        print(" AI Data Insights - Interactive Mode")
         print("="*60)
         print(f"Dataset: {agent.data_context['shape']['rows']} rows, {agent.data_context['shape']['columns']} columns")
         print(f"AI Backend: {agent.backend}/{agent.model}")
@@ -220,7 +220,7 @@ class ModularDataPipeline:
                         print(f"   {i}. {suggestion}")
                     continue
                 elif query.lower() == 'info':
-                    print(f"\n📊 Dataset Info:")
+                    print(f"\n Dataset Info:")
                     print(f"Shape: {agent.data_context['shape']['rows']} rows × {agent.data_context['shape']['columns']} columns")
                     print(f"Columns: {', '.join(agent.data_context['columns'][:5])}{'...' if len(agent.data_context['columns']) > 5 else ''}")
                     print(f"Data completeness: {agent.data_context['data_quality']['completeness']}")
@@ -228,10 +228,10 @@ class ModularDataPipeline:
                 elif not query:
                     continue
                 
-                print("\n🤔 Analyzing...")
+                print("\n Analyzing...")
                 result = agent.query(query)
                 
-                print(f"\n🤖 Response ({result['response_time_seconds']:.1f}s):")
+                print(f"\n Response ({result['response_time_seconds']:.1f}s):")
                 print("-" * 50)
                 print(result['response'])
                 print("-" * 50)
@@ -241,11 +241,11 @@ class ModularDataPipeline:
                 break
             except Exception as e:
                 logger.error(f"Error processing query: {e}")
-                print(f"❌ Error: {e}")
+                print(f" Error: {e}")
 
     def status(self):
         """Show pipeline status."""
-        print("\n📊 Pipeline Status:")
+        print("\n Pipeline Status:")
         print("=" * 40)
         
         stages = ["loaded", "cleaned", "imputed"]
@@ -257,16 +257,16 @@ class ModularDataPipeline:
                 modified = cache_file.stat().st_mtime
                 from datetime import datetime
                 mod_time = datetime.fromtimestamp(modified).strftime("%Y-%m-%d %H:%M:%S")
-                print(f"✅ {stage.capitalize()}: {size:.1f} KB (modified: {mod_time})")
+                print(f" {stage.capitalize()}: {size:.1f} KB (modified: {mod_time})")
             else:
-                print(f"❌ {stage.capitalize()}: Not available")
+                print(f" {stage.capitalize()}: Not available")
         
         # Check if analysis results exist
         analysis_file = self.log_dir / "analysis_results.json"
         if analysis_file.exists():
-            print(f"✅ Analysis: Available")
+            print(f" Analysis: Available")
         else:
-            print(f"❌ Analysis: Not run")
+            print(f" Analysis: Not run")
         
         print("=" * 40)
 
