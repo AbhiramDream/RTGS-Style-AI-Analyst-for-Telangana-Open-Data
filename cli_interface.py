@@ -199,7 +199,7 @@ class ModularDataPipeline:
     def _interactive_mode(self, agent):
         """Interactive query mode."""
         print("\n" + "="*60)
-        print(" AI Data Insights - Interactive Mode")
+        print("🤖 AI Data Insights - Interactive Mode")
         print("="*60)
         print(f"Dataset: {agent.data_context['shape']['rows']} rows, {agent.data_context['shape']['columns']} columns")
         print(f"AI Backend: {agent.backend}/{agent.model}")
@@ -220,7 +220,7 @@ class ModularDataPipeline:
                         print(f"   {i}. {suggestion}")
                     continue
                 elif query.lower() == 'info':
-                    print(f"\n Dataset Info:")
+                    print(f"\n📊 Dataset Info:")
                     print(f"Shape: {agent.data_context['shape']['rows']} rows × {agent.data_context['shape']['columns']} columns")
                     print(f"Columns: {', '.join(agent.data_context['columns'][:5])}{'...' if len(agent.data_context['columns']) > 5 else ''}")
                     print(f"Data completeness: {agent.data_context['data_quality']['completeness']}")

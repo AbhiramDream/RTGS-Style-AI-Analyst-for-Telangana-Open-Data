@@ -4,3 +4,16 @@ loguru
 scikit-learn
 fancyimpute
 statsmodels
+ydata-profiling
+faiss-cpu # optional; remove if not available on target platform
+pytest
+# AI/ML backends
+openai>=1.0.0        # For OpenAI-compatible models
+transformers>=4.30.0 # For HuggingFace models
+torch>=2.0.0         # Backend for transformers
+ollama>=0.1.0        # For Ollama integration (if installed locally)
+
+# CLI & utilities
+typer>=0.9.0         # For CLI handling
+rich>=13.0.0         # For better CLI output
+tqdm>=4.65.0         # For progress bars

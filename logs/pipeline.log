@@ -191,3 +191,11 @@
 2025-09-07 18:33:34 | INFO     | Using imputed data for AI queries
 2025-09-07 18:33:34 | INFO     | Processing query: important  poingts and prediction...
 2025-09-07 18:33:49 | INFO     | Query processed in 14.71s using ollama/llama3.1
+2025-09-07 18:55:38 | ERROR    | Failed to load data: 'DataFrame' object has no attribute 'load'
+2025-09-07 18:59:47 | INFO     | Dataset loaded successfully: 1718 rows, 7 columns
+2025-09-07 18:59:47 | INFO     | Data cached at stage: loaded
+2025-09-07 18:59:47 | SUCCESS  | Data loaded successfully: 1718 rows, 7 columns
+2025-09-07 19:00:08 | INFO     | Loaded data from stage: imputed
+2025-09-07 19:00:08 | INFO     | Using imputed data for AI queries
+2025-09-07 19:00:08 | INFO     | Processing query: data insghts...
+2025-09-07 19:00:28 | INFO     | Query processed in 20.25s using ollama/llama3.1

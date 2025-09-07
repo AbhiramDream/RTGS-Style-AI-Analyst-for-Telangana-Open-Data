@@ -12,7 +12,7 @@ It is designed for researchers, policymakers, and data enthusiasts to quickly ex
 - Analyze datasets with AI-assisted insights
 - Query datasets using natural language
 - Interactive CLI for conversational analysis
-- Multiple AI backends (Ollama, HuggingFace, OpenAI-compatible)
+- Multiple AI backends (Ollama)
 
 ---
 
