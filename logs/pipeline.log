@@ -46,3 +46,73 @@
 2025-09-06 22:14:04 | INFO     | Using imputed data for AI queries
 2025-09-06 22:14:06 | INFO     | Processing query: Which 5 facilities conducted the highest number of diagnostic tests...
 2025-09-06 22:14:27 | INFO     | Query processed in 21.51s using ollama/llama3.1
+2025-09-07 00:55:16 | INFO     | Dataset loaded successfully: 307367 rows, 34 columns
+2025-09-07 00:55:16 | INFO     | Data cached at stage: loaded
+2025-09-07 00:55:16 | SUCCESS  | Data loaded successfully: 307367 rows, 34 columns
+2025-09-07 00:56:06 | INFO     | Loaded data from stage: loaded
+2025-09-07 00:56:06 | INFO     | Data cleaned
+2025-09-07 00:56:06 | INFO     | Data cached at stage: cleaned
+2025-09-07 00:56:06 | SUCCESS  | Data cleaned successfully
+2025-09-07 00:56:34 | INFO     | Loaded data from stage: cleaned
+2025-09-07 00:56:37 | INFO     | Data cached at stage: imputed
+2025-09-07 00:56:37 | SUCCESS  | Data imputation completed successfully
+2025-09-07 00:57:05 | INFO     | Loaded data from stage: imputed
+2025-09-07 00:57:05 | INFO     | Using imputed data for AI queries
+2025-09-07 00:57:07 | INFO     | Processing query: Show summary statistics for all columns...
+2025-09-07 00:58:09 | ERROR    | Failed to query data: catching classes that do not inherit from BaseException is not allowed
+2025-09-07 00:59:00 | INFO     | Loaded data from stage: imputed
+2025-09-07 00:59:00 | INFO     | Using imputed data for AI queries
+2025-09-07 00:59:02 | INFO     | Processing query: Which 5 facilities conducted the highest number of diagnostic tests...
+2025-09-07 00:59:13 | INFO     | Query processed in 10.95s using ollama/llama3.1
+2025-09-07 01:02:57 | INFO     | Loaded data from stage: imputed
+2025-09-07 01:02:57 | INFO     | Using imputed data for AI queries
+2025-09-07 01:02:59 | INFO     | Processing query: Show summary statistics for all columns...
+2025-09-07 01:03:19 | INFO     | Query processed in 19.46s using ollama/llama3.1
+2025-09-07 01:08:13 | INFO     | Loaded data from stage: imputed
+2025-09-07 01:08:13 | INFO     | Using imputed data for AI queries
+2025-09-07 01:08:15 | INFO     | Processing query: give me the summary of missing values and imputed ...
+2025-09-07 01:08:26 | INFO     | Query processed in 11.50s using ollama/llama3.1
+2025-09-07 01:11:05 | INFO     | Dataset loaded successfully: 7358 rows, 11 columns
+2025-09-07 01:11:05 | INFO     | Data cached at stage: loaded
+2025-09-07 01:11:05 | SUCCESS  | Data loaded successfully: 7358 rows, 11 columns
+2025-09-07 01:11:13 | INFO     | Loaded data from stage: loaded
+2025-09-07 01:11:13 | INFO     | Data cleaned
+2025-09-07 01:11:13 | INFO     | Data cached at stage: cleaned
+2025-09-07 01:11:13 | SUCCESS  | Data cleaned successfully
+2025-09-07 01:11:23 | INFO     | Loaded data from stage: cleaned
+2025-09-07 01:11:23 | INFO     | Data cached at stage: imputed
+2025-09-07 01:11:23 | SUCCESS  | Data imputation completed successfully
+2025-09-07 01:11:37 | INFO     | Loaded data from stage: imputed
+2025-09-07 01:11:37 | INFO     | Using imputed data for AI queries
+2025-09-07 01:11:37 | INFO     | Processing query: Show summary statistics for all columns...
+2025-09-07 01:12:02 | INFO     | Query processed in 24.91s using ollama/llama3.1
+2025-09-07 01:14:32 | INFO     | Loaded data from stage: imputed
+2025-09-07 01:14:32 | INFO     | Using imputed data for AI queries
+2025-09-07 01:14:57 | INFO     | Processing query: any specific pattern in the data of a particular region...
+2025-09-07 01:15:14 | INFO     | Query processed in 16.61s using ollama/llama3.1
+2025-09-07 01:36:05 | INFO     | Processing query: Calculating aggregates (e.g., mean, std) for each region separately and comparing them with overall ...
+2025-09-07 01:36:31 | INFO     | Query processed in 25.78s using ollama/llama3.1
+2025-09-07 01:39:35 | INFO     | Processing query: Visualizing the distribution of services, units, and load across regions to identify any deviations ...
+2025-09-07 01:40:11 | INFO     | Query processed in 36.03s using ollama/llama3.1
+2025-09-07 01:55:45 | INFO     | Processing query: the minimum and maximu load statistics...
+2025-09-07 01:56:04 | INFO     | Query processed in 18.73s using ollama/llama3.1
+2025-09-07 01:57:15 | INFO     | Loaded data from stage: imputed
+2025-09-07 01:57:15 | INFO     | Using imputed data for AI queries
+2025-09-07 01:57:55 | INFO     | Processing query: Are there any data quality issues I should address?...
+2025-09-07 01:58:17 | INFO     | Query processed in 21.99s using ollama/llama3.1
+2025-09-07 10:53:44 | INFO     | Dataset loaded successfully: 7358 rows, 11 columns
+2025-09-07 10:53:44 | INFO     | Data cached at stage: loaded
+2025-09-07 10:53:44 | SUCCESS  | Data loaded successfully: 7358 rows, 11 columns
+2025-09-07 10:54:14 | INFO     | Loaded data from stage: loaded
+2025-09-07 10:54:14 | INFO     | Data cleaned
+2025-09-07 10:54:14 | INFO     | Data cached at stage: cleaned
+2025-09-07 10:54:14 | SUCCESS  | Data cleaned successfully
+2025-09-07 10:54:25 | INFO     | Loaded data from stage: cleaned
+2025-09-07 10:54:25 | INFO     | Data cached at stage: imputed
+2025-09-07 10:54:25 | SUCCESS  | Data imputation completed successfully
+2025-09-07 10:54:34 | INFO     | Loaded data from stage: imputed
+2025-09-07 10:54:34 | INFO     | Using imputed data for AI queries
+2025-09-07 10:54:50 | INFO     | Processing query: any specific pattern observed in the data of particular region...
+2025-09-07 10:55:17 | INFO     | Query processed in 26.82s using ollama/llama3.1
+2025-09-07 11:13:48 | INFO     | Processing query: analyze the dataset...
+2025-09-07 11:14:20 | INFO     | Query processed in 32.80s using ollama/llama3.1
